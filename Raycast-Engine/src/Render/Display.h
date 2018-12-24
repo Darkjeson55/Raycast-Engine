@@ -6,7 +6,7 @@
 #include "../math.h"
 
 
-#define RENDER_WIDHT 160
+#define RENDER_WIDHT 640
 #define RENDER_HEIGHT (RENDER_WIDHT * 3 / 4)
 #define SCALE 4
 
