@@ -33,6 +33,10 @@ public:
 
 	void render(sf::RenderWindow* window);
 
+	void drawWorld();
+
+	void drawWalls();
+
 
 	~Display();
 
@@ -43,7 +47,9 @@ private:
 	//Render Stuff
 	sf::View Render;
 	sf::RenderTexture buffer;
-
+	sf::Image render_Test;
+	sf::Sprite m_sprite;
+	sf::Uint8 *m_pixels;
 
 	Player m_player;
 };

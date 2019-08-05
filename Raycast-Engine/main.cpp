@@ -3,8 +3,6 @@
 #include <SFML\Graphics\Color.hpp>
 #include <random>
 #include <iostream>
-#include <math.h>
-#include <iomanip>
 
 #include "src\Game.h"
 

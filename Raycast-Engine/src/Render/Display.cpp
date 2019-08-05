@@ -15,6 +15,11 @@ Display::Display()
 	m_player.Camera.x = 0;
 	m_player.Camera.y = 0.66;
 	buffer.clear(sf::Color::Black);
+
+
+	m_pixels = new sf::Uint8[RENDER_HEIGHT * RENDER_WIDHT * 4];
+
+	render_Test.create(RENDER_WIDHT, RENDER_HEIGHT, sf::Color::Black);
 }
 
 
@@ -58,11 +63,55 @@ void Display::render(sf::RenderWindow* window)
 
 	sf::View view(sf::Vector2f(RENDER_WIDHT / 2.0f, RENDER_HEIGHT / 2.0f), sf::Vector2f((float)RENDER_WIDHT, (float)RENDER_HEIGHT));
 
-	window->setView(view);
+	//window->setView(view);
 
 
 	sf::VertexArray lines(sf::Lines, ((RENDER_WIDHT) * 2));
 	int LineRenderIndex = 0;
+
+	
+
+
+
+	for (uint32_t x = 0; x < RENDER_WIDHT; x++)
+	{
+
+
+		for (uint32_t y = 0; y < RENDER_HEIGHT; y++)
+		{
+
+
+
+			if (y <= RENDER_HEIGHT / 2)
+			{
+				m_pixels[y * x] = 0; // R?
+				m_pixels[y * x + 1] = 255; // G?
+				m_pixels[y * x + 2] = 0; // B?
+				m_pixels[y * x + 3] = 255; // A?
+
+			}
+			//else
+			//{
+			//	m_pixels[y * x] = 255; // R?
+			//	m_pixels[y * x + 1] = 0; // G?
+			//	m_pixels[y * x + 2] = 0; // B?
+			//	m_pixels[y * x + 3] = 255; // A?
+			//}
+
+			//buffer.draw(render_Test);
+		}
+
+	}
+
+	sf::Texture text;
+	text.create(RENDER_WIDHT, RENDER_HEIGHT);
+	text.update(m_pixels);
+
+	m_sprite.setTexture(text);
+
+	m_sprite.setPosition(sf::Vector2f(0, 0));
+	//m_sprite.setScale(sf::Vector2f(800, 600));
+
 
 	for (uint32_t x = 1; x <= RENDER_WIDHT; x++)
 	{
@@ -184,11 +233,13 @@ void Display::render(sf::RenderWindow* window)
 	}
 	buffer.clear(sf::Color::Black);
 
+	//buffer.draw(m_sprite);
 	buffer.draw(lines);
 	buffer.display();
 
 
 	window->draw(bufferSprite);
+	//window->draw(m_sprite);
 }
 
 Display::~Display()
