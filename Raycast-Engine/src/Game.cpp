@@ -26,6 +26,8 @@ void Game::init()
 	ImGui::SFML::Init(*m_window);
 
 
+	m_dispalay->init();
+
 	m_window->resetGLStates();
 
 
