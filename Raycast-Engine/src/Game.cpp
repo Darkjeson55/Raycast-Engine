@@ -1,8 +1,6 @@
 #include "Game.h"
 
 
-#include "../IMGUI/imgui.h"
-#include "../IMGUI/imgui-SFML.h"
 
 #include <SFML/Window/Event.hpp>
 
@@ -12,7 +10,7 @@ const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 using namespace sf;
 
-Game::Game() : m_WIDTH(800), m_HEIGHT(600) , clear_color(0x6C7A89)
+Game::Game() : clear_color(0x6C7A89)
 {
 
 }
@@ -21,9 +19,8 @@ Game::Game() : m_WIDTH(800), m_HEIGHT(600) , clear_color(0x6C7A89)
 void Game::init()
 {
 	m_dispalay = new Display();
-	m_window = new sf::RenderWindow(sf::VideoMode(800, 600), "3D render");
+	m_window = new sf::RenderWindow(sf::VideoMode(RENDER_WIDTH * SCALE, RENDER_HEIGHT * SCALE), "3D render");
 
-	ImGui::SFML::Init(*m_window);
 
 
 	m_dispalay->init();
@@ -47,7 +44,6 @@ void Game::poolEvent()
 	sf::Event event;
 	while (m_window->pollEvent(event))
 	{
-		ImGui::SFML::ProcessEvent(event);
 		if (event.type == sf::Event::Closed)
 			m_window->close();
 	}
@@ -84,13 +80,10 @@ void Game::mainLoop()
 
 
 
-		ImGui::SFML::Update(*m_window, TimePerFrame);
-		ImGui::Text("Hello World");
 
 
 		m_window->clear(clear_color);
 		render(m_window);
-		ImGui::SFML::Render(*m_window);
 		m_window->display();
 	}
 
@@ -108,4 +101,5 @@ void Game::close()
 Game::~Game()
 {
 	delete(m_window);
+	delete(m_dispalay);
 }

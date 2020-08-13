@@ -19,11 +19,20 @@ struct Math
 		return newVec;
 	}
 
+	static float vectorLenght(sf::Vector2f vec)
+	{
+		return sqrt(pow(vec.x, 2) + pow(vec.y, 2));
+	}
 
+	static sf::Vector2f normalize(sf::Vector2f vec)
+	{
+		float lenght = vectorLenght(vec);
+		return sf::Vector2f(vec.x / lenght, vec.y / lenght);
+	}
 
 	static float degreeToRadians(float degree)
 	{
-		return degree * (180 / PI);
+		return degree * (PI / 180);
 	}
 
 };

@@ -30,9 +30,6 @@ public:
 
 private:
 
-	const int m_WIDTH;
-	const int m_HEIGHT;
-
 	const sf::Color clear_color;
 	static const sf::Time	TimePerFrame;
 	sf::RenderWindow* m_window;
