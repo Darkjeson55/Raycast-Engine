@@ -20,12 +20,12 @@ void Game::init()
 {
 	m_dispalay = new Display();
 	m_window = new sf::RenderWindow(sf::VideoMode(RENDER_WIDTH * SCALE, RENDER_HEIGHT * SCALE), "3D render");
-
+	ImGui::SFML::Init(*m_window);
 
 
 	m_dispalay->init();
 
-	m_window->resetGLStates();
+	//m_window->resetGLStates();
 
 
 
@@ -44,8 +44,12 @@ void Game::poolEvent()
 	sf::Event event;
 	while (m_window->pollEvent(event))
 	{
+		ImGui::SFML::ProcessEvent(event);
 		if (event.type == sf::Event::Closed)
+		{
 			m_window->close();
+			
+		}
 	}
 }
 
@@ -78,15 +82,22 @@ void Game::mainLoop()
 			update(TimePerFrame);
 		}
 
+		ImGui::SFML::Update(*m_window, TimePerFrame);
 
+
+		ImGui::Begin("Hello, world!");
+		ImGui::Button("Look at this pretty button");
+		ImGui::End();
 
 
 
 		m_window->clear(clear_color);
 		render(m_window);
+		ImGui::SFML::Render(*m_window);
 		m_window->display();
-	}
 
+	}
+	ImGui::SFML::Shutdown();
 	close();
 }
 

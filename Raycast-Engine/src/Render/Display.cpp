@@ -1,7 +1,7 @@
 #include "Display.h"
 
-#include <math.h>
-
+#include <iostream>
+#include <cmath>
 
 Display::Display()
 {
@@ -13,6 +13,9 @@ void Display::init()
 	texture.create(RENDER_WIDTH, RENDER_HEIGHT);
 	frameBuffer = new sf::Uint8[RENDER_WIDTH * RENDER_HEIGHT * 4];
 	sprite.setScale(SCALE, SCALE);
+
+	tex.loadFromFile("image.png");
+	img = sf::Image(tex.copyToImage());
 }
 
 void Display::render(sf::RenderWindow* window)
@@ -59,6 +62,11 @@ void Display::drawWorld()
 	}
 }
 
+float lerp(float a, float b, float t)
+{
+	return (a + t * (b - a));
+}
+
 void Display::draw()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -97,6 +105,27 @@ void Display::draw()
 		cameraDirection = Math::rotateVector(cameraDirection, -0.01f);
 	}
 
+
+	for (int x = 0; x < RENDER_WIDTH; x++)
+	{
+		for (int y = 0; y < RENDER_HEIGHT; y++)
+		{
+			if (y < RENDER_HEIGHT / 2.0f)
+			{
+
+
+
+				drawPixel(x, y,0x0098dc);
+			}
+			else
+			{
+				drawPixel(x, y, 0x5d5d5d);
+			}
+		}
+	}
+
+
+	//drawWorld();
 	RaycastRender();
 	//std::cout << a / b << std::endl;
 }
@@ -170,9 +199,24 @@ void Display::RaycastRender()
 		if (side == 0) perpWallDist = (mapX - playerPosition.x + (1 - stepX) / 2) / rayDirX;
 		else          perpWallDist = (mapY - playerPosition.y + (1 - stepY) / 2) / rayDirY;
 
+		double wallX; //where exactly the wall was hit
+		if (side == 0) wallX = playerPosition.y + perpWallDist * rayDirY;
+		else          wallX = playerPosition.x + perpWallDist * rayDirX;
+		wallX -= floor((wallX));
+
+		float texWidth = tex.getSize().x;
+
+		int texX = int(wallX * double(texWidth));
+		if (side == 0 && rayDirX > 0) texX = texWidth - texX - 1;
+		if (side == 1 && rayDirY < 0) texX = texWidth - texX - 1;
+
+
+
 		int h = RENDER_HEIGHT;
 
 		int lineHeight = (int)(h / perpWallDist);
+
+		double step = 1.0 * tex.getSize().y / lineHeight;
 
 		//calculate lowest and highest pixel to fill in current stripe
 		int drawStart = -lineHeight / 2 + h / 2;
@@ -180,17 +224,24 @@ void Display::RaycastRender()
 		int drawEnd = lineHeight / 2 + h / 2;
 		if (drawEnd >= h)drawEnd = h - 1;
 
+		double texPos = (drawStart - h / 2 + lineHeight / 2) * step;
 
 		for (int y = drawStart; y < drawEnd; y++)
 		{
-			if (side == 0)
-			{
-				drawPixel(x, y, 0xff0000);
-			}
-			else
-			{
-				drawPixel(x, y, 0x00ff00);
-			}
+			// Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
+			int texY = (int)texPos & (tex.getSize().y - 1);
+			texPos += step;
+			sf::Color color = img.getPixel(texX, texY);
+			//make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
+			//if (side == 1) color = (color >> 1) & 8355711;
+
+			int col;
+
+			col = (color.r << 16) | (color.g << 8) | (color.b);
+
+			drawPixel(x, y, col);
+
+			//buffer[y][x] = color;
 		}
 
 	}

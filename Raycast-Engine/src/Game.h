@@ -9,6 +9,9 @@
 #include "math.h" 
 
 
+#include <imgui.h>
+#include <imgui-SFML.h>
+
 class Game
 {
 public:

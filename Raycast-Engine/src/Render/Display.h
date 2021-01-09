@@ -70,7 +70,9 @@ private:
 	sf::Vector2f plane = sf::Vector2f(0,0.66f);
 	sf::Vector2f playerPosition = sf::Vector2f(4,2);
 	sf::Vector2f cameraDirection = sf::Vector2f(-1.0f,0.0f);
-	
+
+	sf::Texture tex;
+	sf::Image img;
 	int map[100] = {
 		1,1,1,1,1,1,1,1,1,1,
 		1,0,0,0,0,0,0,0,0,1,
