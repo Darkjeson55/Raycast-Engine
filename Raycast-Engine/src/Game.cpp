@@ -15,7 +15,6 @@ Game::Game() : clear_color(0x6C7A89)
 
 }
 
-
 void Game::init()
 {
 	m_dispalay = new Display();
@@ -35,9 +34,54 @@ void Game::init()
 void Game::update(sf::Time dt)
 {
 
+	dir = Math::rotateVector(directionVec, player_rotY);
+	
+	sf::Vector2f lateralVec = Math::rotateVector(dir, -90.0 * 3.1415 / 180.0);
+	
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		player_posZ += dir.y * movement_speed * dt.asMilliseconds();
+		player_posX += dir.x * movement_speed * dt.asMilliseconds();
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		player_posZ -= dir.y * movement_speed * dt.asMilliseconds();
+		player_posX -= dir.x * movement_speed * dt.asMilliseconds();
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		player_posZ += lateralVec.y * movement_speed * dt.asMilliseconds();
+		player_posX += lateralVec.x * movement_speed * dt.asMilliseconds();
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		player_posZ -= lateralVec.y * movement_speed * dt.asMilliseconds();
+		player_posX -= lateralVec.x * movement_speed * dt.asMilliseconds();
+	}
+
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+	{
+
+		player_rotY -= rot_speed * dt.asMilliseconds();
+	}
+
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+	{
+
+		player_rotY += rot_speed * dt.asMilliseconds();
+	}
+
+
+	Render3D::SetCameraPos(player_posX, player_posY, player_posZ);
+	Render3D::SetCaneraRot(0, player_rotY);
 
 }
-
 
 void Game::poolEvent()
 {
@@ -48,20 +92,14 @@ void Game::poolEvent()
 		if (event.type == sf::Event::Closed)
 		{
 			m_window->close();
-			
 		}
 	}
 }
-
-
-
 
 void Game::render(sf::RenderWindow* window)
 {
 	m_dispalay->render(window);
 }
-
-
 
 void Game::mainLoop()
 {
@@ -70,7 +108,6 @@ void Game::mainLoop()
 
 	while (m_window->isOpen())
 	{
-
 		sf::Time elapsedTime = clock.restart();
 		timeSinceLastUpdate += elapsedTime;
 
@@ -85,11 +122,11 @@ void Game::mainLoop()
 		ImGui::SFML::Update(*m_window, TimePerFrame);
 
 
-		ImGui::Begin("Hello, world!");
-		ImGui::Button("Look at this pretty button");
+		ImGui::Begin("Debug");
+		ImGui::Text("FPS: %f ", 1.0f / elapsedTime.asSeconds());
+		ImGui::Text("Direction: ");
+
 		ImGui::End();
-
-
 
 		m_window->clear(clear_color);
 		render(m_window);
@@ -104,10 +141,6 @@ void Game::mainLoop()
 void Game::close()
 {
 }
-
-
-
-
 
 Game::~Game()
 {

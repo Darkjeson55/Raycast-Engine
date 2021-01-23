@@ -145,6 +145,9 @@
     <ClCompile Include="src\Render\Display.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Render\Render3D.cpp" />
+    <ClCompile Include="src\Render\RenderBuffer.cpp" />
+    <ClCompile Include="src\Render\RenderLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IMGUI\imconfig-SFML.h" />
@@ -159,6 +162,10 @@
     <ClInclude Include="src\Render\Display.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\math.h" />
+    <ClInclude Include="src\Render\Render2D.h" />
+    <ClInclude Include="src\Render\Render3D.h" />
+    <ClInclude Include="src\Render\RenderBuffer.h" />
+    <ClInclude Include="src\Render\RenderLayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

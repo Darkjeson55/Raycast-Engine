@@ -7,10 +7,11 @@
 #include <stdlib.h> 
 
 #include "../math.h"
+#include "Render3D.h"
 
 #define RENDER_WIDTH 240
-#define RENDER_HEIGHT (RENDER_WIDTH * 3 / 4)
-#define SCALE 2
+#define RENDER_HEIGHT (RENDER_WIDTH * 9 / 16)
+#define SCALE 3
 
 
 #define PLAYER_HEIGHT 32
@@ -31,13 +32,9 @@ public:
 
 	void render(sf::RenderWindow* window);
 
-
-
 	void drawWorld();
 
 	void draw();
-
-	void RaycastRender();
 
 	int rndColor() {
 		int color;
@@ -48,17 +45,18 @@ public:
 
 		color = r | g | b;
 
-
 		return color;
 	}
 
-	void drawPixel(int x, int y, int color);
+	void DrawPixel(int x, int y, int color);
+
+	void GetPixe(int x, int y, int color);
 
 	void drawLine(sf::Vector2f pointA, sf::Vector2f pointB, int color);
 
+	Render3D& GetRender() { return render3D; }
 
 	~Display();
-
 
 private:
 	sf::Uint8* frameBuffer;
@@ -70,6 +68,11 @@ private:
 	sf::Vector2f plane = sf::Vector2f(0,0.66f);
 	sf::Vector2f playerPosition = sf::Vector2f(4,2);
 	sf::Vector2f cameraDirection = sf::Vector2f(-1.0f,0.0f);
+
+	float time;
+
+
+	Render3D render3D;
 
 	sf::Texture tex;
 	sf::Image img;

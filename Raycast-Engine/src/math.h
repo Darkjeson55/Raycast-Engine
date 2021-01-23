@@ -6,8 +6,6 @@
 
 struct Math
 {
-	static const float pi;
-
 
 	static sf::Vector2f rotateVector(sf::Vector2f vec, float angle)
 	{
@@ -34,6 +32,5 @@ struct Math
 	{
 		return degree * (PI / 180);
 	}
-
 };
 
