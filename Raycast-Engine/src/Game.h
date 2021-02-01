@@ -38,7 +38,7 @@ private:
 	float player_posY;
 	float player_posZ;
 
-	float rot_speed = 0.001f;
+	float rot_speed = 0.005f;
 	float movement_speed = 0.12f;
 
 

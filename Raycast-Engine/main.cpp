@@ -6,11 +6,13 @@
 
 #include "src\Game.h"
 
+#include <bitset>
+#include <immintrin.h>
 
 int main()
 {
 	Game game;
 	game.init();
-
+	system("PAUSE");
 	return 0;
 }

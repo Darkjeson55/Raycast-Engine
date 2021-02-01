@@ -9,9 +9,9 @@
 #include "../math.h"
 #include "Render3D.h"
 
-#define RENDER_WIDTH 240
-#define RENDER_HEIGHT (RENDER_WIDTH * 9 / 16)
-#define SCALE 3
+#define RENDER_WIDTH 140
+#define RENDER_HEIGHT (RENDER_WIDTH * 3 / 4)
+#define SCALE 5
 
 
 #define PLAYER_HEIGHT 32
