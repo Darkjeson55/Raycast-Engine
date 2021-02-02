@@ -19,7 +19,7 @@ public:
 
 	void OldRender();
 
-	void RenderFog(int x, int y, int depth);
+	void RenderFog();
 
 	void DrawFloor(float xPix, float yPix, float yd, int x, int y);
 
@@ -31,6 +31,7 @@ public:
 
 private:
 	float* depthBuffer;
+	float* depthBufferWall;
 
 
 	float m_time;

@@ -10,7 +10,7 @@
 #include "Render3D.h"
 
 #define RENDER_WIDTH 140
-#define RENDER_HEIGHT (RENDER_WIDTH * 3 / 4)
+#define RENDER_HEIGHT (RENDER_WIDTH * 9 / 16)
 #define SCALE 5
 
 

@@ -21,6 +21,7 @@ Render3D::Render3D(int width, int height, int scale) : RenderLayer(width, height
 	img = sf::Image(tex.copyToImage());
 
 	depthBuffer = new float[width * height];
+	depthBufferWall = new float[width];
 }
 
 Render3D::~Render3D()
@@ -30,8 +31,8 @@ Render3D::~Render3D()
 
 void Render3D::Render()
 {
-	OldRender();
-	//SIMDRender();
+	//OldRender();
+	SIMDRender();
 }
 
 
@@ -110,13 +111,16 @@ void Render3D::SIMDRender()
 
 void Render3D::OldRender()
 {
+	for (int x = 0; x < m_width; x++)
+		depthBufferWall[x] = 0;
+
 	m_time++;
 
 
-	m_yRot = sin(m_time / 20) * 0.2;
-	m_xPos = 0;//((int)m_time % 80) / 40.0;
+	/*m_yRot = sin(m_time / 20) * 0.2;
+	m_xPos = 0; //((int)m_time % 100) / 20.0;
 	m_yPos = 0;//sin(m_time / 10.0) * 2;
-	m_zPos = 0;//((int)m_time % 80) / 40.0;
+	m_zPos = 0;  ((int)m_time % 50) / 2.0;*/
 
 	rtSin = sin(m_yRot);
 	rtCos = cos(m_yRot);
@@ -128,11 +132,11 @@ void Render3D::OldRender()
 	for (int y = 0; y < m_height; y++)
 	{
 		float yd = ((y + 0.5) - halfHeight) / m_height;
-		float zd = ((4 + m_yPos) / (yd));
+		float zd = ((8 + m_yPos) / (yd));
 
 		if (yd < 0)
 		{
-			zd = ((4 - m_yPos) / (-yd));;
+			zd = ((8 - m_yPos) / (-yd));;
 		}
 		for (int x = 0; x < m_width; x++)
 		{
@@ -142,11 +146,11 @@ void Render3D::OldRender()
 			float positionX = xd;
 			float positionY = zd;
 
-			float xx = (positionX * rtCos - positionY * rtSin + (m_xPos + 0.5) * 8);
-			float yy = (positionX * rtSin + positionY * rtCos + (m_zPos) * 8);
+			float xx = (positionX * rtCos - positionY * rtSin + (m_xPos) + 8);
+			float yy = (positionX * rtSin + positionY * rtCos + (m_zPos));
 
-			int xPix = (int)xx * 2;
-			int yPix = (int)yy * 2;
+			int xPix = (int)xx;
+			int yPix = (int)yy;
 
 			if (xx < 0)
 				xPix--;
@@ -185,60 +189,90 @@ void Render3D::OldRender()
 
 
 			//end Wall
-			RenderFog(x, y, zd);
 		}
 	}
 
 
-	DrawWall(0,3,0.5,2.5);
-
+	//DrawWall(0, 2, 1, 2);
+	//DrawWall(0, 1, 0, 2);
+	DrawWall(1, 0, 0, 2.0);
+	RenderFog();
 }
 
 
-void Render3D::RenderFog(int x, int y, int depth)
+void Render3D::RenderFog()
 {
-	sf::Uint8* pix = GetBuffer().GetPixel(x, y);
-
-	double bright = (1000 / depth) * 5;
-
-	if (bright < 0)
+	for (int i = 0; i < m_width * m_height; i++)
 	{
-		bright = 0;
+		int x = i % m_width;
+		int y = floor(i / m_width);
+
+		sf::Uint8* pix = GetBuffer().GetPixel(x, y);
+
+		double bright = (1000 / depthBuffer[i]) * 5;
+
+		if (bright < 0)
+		{
+			bright = 0;
+		}
+
+		if (bright > 255)
+		{
+			bright = 255;
+		}
+
+		pix[0] = Math::lerp(0x00, pix[0], bright / 255);
+		pix[1] = Math::lerp(0x00, pix[1], bright / 255);
+		pix[2] = Math::lerp(0x00, pix[2], bright / 255);
+
+		int color = pix[0] << 16 | pix[1] << 8 | pix[2];
+
+		GetBuffer().SetPixel(x, y, color);
 	}
-
-	if (bright > 255)
-	{
-		bright = 255;
-	}
-
-	pix[0] = Math::lerp(0x00, pix[0], bright / 255);
-	pix[1] = Math::lerp(0x00, pix[1], bright / 255);
-	pix[2] = Math::lerp(0x00, pix[2], bright / 255);
-
-	int color = pix[0] << 16 | pix[1] << 8 | pix[2];
-
-	GetBuffer().SetPixel(x, y, color);
 }
 
 void Render3D::DrawWall(float x0, float y0, float x1, float y1)
 {
 
-	float xp0 = x0 - 0.5 - m_xPos * 2;
-	float u0 = - 0.5 + m_yPos / 4;
-	float d0 = + 0.5 + m_yPos / 4;
-	float zp0 = y0 - m_zPos * 2;
+	float xp0 = x0 - 0.5 - m_xPos / 16;
+	float u0 = - 0.5 + m_yPos / 16;
+	float d0 = + 0.5 + m_yPos / 16;
+	float zp0 = y0 - m_zPos / 16;
 
 	float xx0 = xp0 * rtCos + zp0 * rtSin;
 	float zz0 = -xp0 * rtSin + zp0 * rtCos;
 
 
-	float xp1 = x1 - 0.5 - m_xPos * 2;
-	float u1 = - 0.5 + m_yPos / 4;
-	float d1 = + 0.5 + m_yPos / 4;
-	float zp1 = y1 - m_zPos * 2;
+	float xp1 = x1 - 0.5 - m_xPos / 16;
+	float u1 = - 0.5 + m_yPos / 16;
+	float d1 = + 0.5 + m_yPos / 16;
+	float zp1 = y1 - m_zPos / 16;
 
 	float xx1 = xp1 * rtCos + zp1 * rtSin;
 	float zz1 = -xp1 * rtSin + zp1 * rtCos;
+
+	float t0 = 0;
+	float t1 = 16;
+
+	float clip = 0.1;
+
+
+	if (zz0 < clip)
+	{
+		float p = (clip - zz0) / (zz1 - zz0);
+		zz0 = zz0 + (zz1 - zz0) * p;
+		xx0 = xx0 + (xx1 - xx0) * p;
+		t0 = t0 + (t1 - t0) * p;
+	}
+
+
+	if (zz1 < clip)
+	{
+		float p = (clip - zz1) / (zz1 - zz0);
+		zz1 = zz1 + (zz1 - zz0) * p;
+		xx1 = xx1 + (xx1 - xx0) * p;
+		t1 = t1 + (t1 - t0) * p;
+	}
 
 
 	float xPixel0 = xx0 / zz0 * m_height + m_width  / 2.0;
@@ -247,8 +281,8 @@ void Render3D::DrawWall(float x0, float y0, float x1, float y1)
 
 	if (xPixel0 > xPixel1)
 		return;
-	int xo0 = (int)ceil(xPixel0);
-	int xo1 = (int)ceil(xPixel1);
+	int xo0 = (int)round(xPixel0);
+	int xo1 = (int)round(xPixel1);
 
 	if (xo0 < 0)
 		xo0 = 0;
@@ -257,42 +291,67 @@ void Render3D::DrawWall(float x0, float y0, float x1, float y1)
 		xo1 = m_width;
 
 
-	float yPixel00 = u0 / zz0 * m_height + m_height / 2.0;
-	float yPixel10 = u1 / zz1 * m_height + m_height / 2.0;
+	float yPixel00 = u0 / zz0 * m_height + m_height / 2.0 + 0.5;
+	float yPixel10 = u1 / zz1 * m_height + m_height / 2.0 + 0.5;
 
-	float yPixel01 = d0 / zz0 * m_height + m_height / 2.0;
-	float yPixel11 = d1 / zz1 * m_height + m_height / 2.0;
+	float yPixel01 = d0 / zz0 * m_height + m_height / 2.0 + 0.5;
+	float yPixel11 = d1 / zz1 * m_height + m_height / 2.0 + 0.5;
+
+
+	float iz0 = 1 / zz0;
+	float iz1 = 1 / zz1;
+
+	float xt0 = 0 * iz0;
+	float xt1 = 16 * iz1;
+
 
 	for (int x = xo0; x < xo1; x++)
 	{
-		float yPixel0 = yPixel00 + (x - xPixel0) * (yPixel10 - yPixel00) / (xPixel1 - xPixel0);
-		float yPixel1 = yPixel01 + (x - xPixel0) * (yPixel11 - yPixel01) / (xPixel1 - xPixel0);
+		float p = (x - xPixel0) / (xPixel1 - xPixel0);
 
+		float yPixel0 = yPixel00 + (yPixel10 - yPixel00) * p;
+		float yPixel1 = yPixel01 + (yPixel11 - yPixel01) * p;
+
+		float iz = iz0 + (iz1 - iz0) * p;
+
+		if (depthBufferWall[x] > iz)
+			continue;
+		depthBufferWall[x] = iz;
+		int xTex = int((xt0 + (xt1 - xt0) * p) / iz);
 
 		if (yPixel0 > yPixel1)
 			return;
-		int yo0 = (int)yPixel0;
-		int yo1 = (int)yPixel1;
+		int yo0 = (int)floor(yPixel0);
+		int yo1 = (int)floor(yPixel1);
 
-		if (xo0 < 0)
-			xo0 = 0;
+		if (yo0 < 0)
+			yo0 = 0;
 
-		if (xo1 > m_width)
-			xo1 = m_width;
+		if (yo1 > m_height)
+			yo1 = m_height;
 
 
-		for (int y = yo0; y <= yo1; y++)
+		for (int y = yo0; y < yo1; y++)
 		{
+			float py = (y - yPixel0) / (yPixel1 - yPixel0);
 
-			GetBuffer().SetPixel(x, y, 0xff00ff);
+			int yTex = py * 16;
+
+			if (x >= 0 && x < m_width && y > 0 && y <= m_height)
+			{
+				depthBuffer[x + y * m_width] =  24 / iz;
+
+				sf::Color c = img.getPixel((int)(xTex + 16), (int)(yTex + 16));
+				int r = c.r;
+				int g = c.g;
+				int b = c.b;
+				int color = r << 16 | g << 8 | b;
+
+
+				GetBuffer().SetPixel(x, y, color);
+			}
 		}
 	}
-
-
-	/*if (xPixel >= 0 && xPixel < m_width && yPixel >= 0 && yPixel < m_height)
-	{
-		GetBuffer().SetPixel(xPixel, yPixel, 0xff00ff);
-	}*/
 }
 
 
