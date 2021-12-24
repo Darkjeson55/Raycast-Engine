@@ -121,9 +121,23 @@ void Game::mainLoop()
 
 		ImGui::SFML::Update(*m_window, TimePerFrame);
 
+		frames.push_back(1.0f / elapsedTime.asSeconds());
+
+		if (frames.size() > 100)
+		{
+			int average = 0.0;
+			for (int i = 0; i < frames.size(); i++)
+			{
+				average += frames.at(i);
+			}
+
+			currentFrame = average / frames.size();
+
+			frames.clear();
+		}
 
 		ImGui::Begin("Debug");
-		ImGui::Text("FPS: %f ", 1.0f / elapsedTime.asSeconds());
+		ImGui::Text("FPS: %f ", currentFrame);
 		ImGui::Text("Direction: ");
 
 		ImGui::End();

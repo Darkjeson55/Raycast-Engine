@@ -55,6 +55,10 @@ private:
 
 	Display* m_dispalay;
 
+	std::vector<double> frames;
+
+	double currentFrame = 0.0;
+
 };
 
 #endif

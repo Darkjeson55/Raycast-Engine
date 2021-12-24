@@ -32,7 +32,43 @@ Render3D::~Render3D()
 void Render3D::Render()
 {
 	//OldRender();
-	SIMDRender();
+	//SIMDRender();
+	ShaderRender();
+}
+
+void Render3D::ShaderRender()
+{
+	/*for (int y = 0; y < m_height; y++)
+	{
+		for (int x = 0; x < m_width; x++)
+		{
+
+			//sf::Color c = img.getPixel((int)(xPix) & 15, (int)(yPix) & 15);
+			int r = 0;
+			int g = 255;
+			int b = 0;
+
+			int color = r << 16 | g << 8 | b;
+
+			GetBuffer().SetPixel(x, y, color);
+		}
+	}*/
+
+	for (int x = 0; x < m_width; x++)
+	{
+		for (int y = 0; y < m_height; y++)
+		{
+
+			//sf::Color c = img.getPixel((int)(xPix) & 15, (int)(yPix) & 15);
+			int r = 255;
+			int g = 0;
+			 int b = 0;
+
+			int color = r << 16 | g << 8 | b;
+
+			GetBuffer().SetPixel(x, y, color);
+		}
+	}
 }
 
 
@@ -43,65 +79,96 @@ void Render3D::SIMDRender()
 	//float halfHeight = m_height / 2.0f;
 	//float halfWidth = m_width / 2.0f;
 
-	__m256 halfHeight = _mm256_set1_ps(m_height / 2.0f);
-	__m256 halfWidth = _mm256_set1_ps(m_width / 2.0f);
-	__m256 mmHeight = _mm256_set1_ps(m_height);
-	__m256 yPixelPos, ysub, yd;
-	__m256 xPixelPos, xOffseted, xsub, xd, zx_d;
-	__m256 CamX = _mm256_set1_ps(m_xPos);
-	__m256 CamY = _mm256_set1_ps(m_yPos);
-	__m256 CamZ = _mm256_set1_ps(m_zPos);
-	__m256 zPixelPos, zadd, zd;
-	__m256 _x_offset = _mm256_setr_ps(0,1,2,3,4,5,6,7);
+	__m128 halfHeight = _mm_set1_ps(m_height / 2);
+	__m128 halfWidth = _mm_set1_ps(m_width / 2);
+	__m128 mmHeight = _mm_set1_ps(m_height);
+	__m128 yPixelPos, ysub, yd;
+	__m128 xPixelPos, xOffseted, xsub, xd, zx_d;
+	__m128 CamX = _mm_set1_ps(m_xPos);
+	__m128 CamY = _mm_set1_ps(m_yPos);
+	__m128 CamZ = _mm_set1_ps(m_zPos);
+	__m128 zPixelPos, zadd, zd;
+	__m128 _x_offset = _mm_setr_ps(0, 1, 2, 3);
 
-	__m256 redShift = _mm256_set1_ps(pow(2, 24));
-	__m256 greenshift = _mm256_set1_ps(pow(2, 16));
-	__m256 blueShift = _mm256_set1_ps(pow(2, 8));
+	__m128 redShift = _mm_set1_ps(pow(2, 24));
+	__m128 greenshift = _mm_set1_ps(pow(2, 16));
+	__m128 blueShift = _mm_set1_ps(pow(2, 8));
 
-	__m256 bitwise = _mm256_set1_ps(15);
-	__m256 alpha = _mm256_set1_ps(0xff);
+	__m128 bitwise = _mm_set1_ps(15);
+	__m128i shift = _mm_set1_epi32(8);
+	__m128 alpha = _mm_set1_ps(0xff);
 
-	__m256 bitColorG, bitColorB;
+	__m128i bitColorG, bitColorB;
 
-	__m256 colorG;
-	__m256 colorB;
+	__m128i colorG;
+	__m128 colorB;
 
-	zPixelPos = _mm256_set1_ps(8);
+	zPixelPos = _mm_set1_ps(8);
 
-	__m256 colors , colorsA;
+	__m128i colors, colorsA;
 
-	__m256i finalColor;
+	__m128i finalColor;
+
+	//__m256 halfHeight = _mm256_set1_ps(m_height / 2.0f);
+	//__m256 halfWidth = _mm256_set1_ps(m_width / 2.0f);
+	//__m256 mmHeight = _mm256_set1_ps(m_height);
+	//__m256 yPixelPos, ysub, yd;
+	//__m256 xPixelPos, xOffseted, xsub, xd, zx_d;
+	//__m256 CamX = _mm256_set1_ps(m_xPos);
+	//__m256 CamY = _mm256_set1_ps(m_yPos);
+	//__m256 CamZ = _mm256_set1_ps(m_zPos);
+	//__m256 zPixelPos, zadd, zd;
+	//__m256 _x_offset = _mm256_setr_ps(0,1,2,3,4,5,6,7);
+
+	//__m256 redShift = _mm256_set1_ps(pow(2, 24));
+	//__m256 greenshift = _mm256_set1_ps(pow(2, 16));
+	//__m256 blueShift = _mm256_set1_ps(pow(2, 8));
+
+	//__m256 bitwise = _mm256_set1_ps(15);
+	//__m256 alpha = _mm256_set1_ps(0xff);
+
+	//__m256 bitColorG, bitColorB;
+
+	//__m256 colorG;
+	//__m256 colorB;
+
+	//zPixelPos = _mm256_set1_ps(8);
+
+	//__m256 colors , colorsA;
+
+	//__m256i finalColor;
 
 	for (int y = 0; y < m_height; y++)
 	{
 		//float yd = (y - halfHeight) / m_height;
-		yPixelPos = _mm256_set1_ps(y);
-		ysub = _mm256_sub_ps(yPixelPos, halfHeight);
-		yd = _mm256_div_ps(ysub, mmHeight);
+		yPixelPos = _mm_set1_ps(y);
+		ysub = _mm_sub_ps(yPixelPos, halfHeight);
+		yd = _mm_div_ps(ysub, mmHeight);
 		
 		//zd
-		zadd = _mm256_add_ps(zPixelPos, CamY);
-		zd = _mm256_div_ps(zadd, yd);
+		zadd = _mm_add_ps(zPixelPos, CamY);
+		zd = _mm_div_ps(zadd, yd);
 
-		for (int x = 0; x < m_width; x+=8)
+		for (int x = 0; x < m_width; x+=4)
 		{
-			xPixelPos = _mm256_set1_ps(x);
-			xOffseted = _mm256_add_ps(xPixelPos, _x_offset);
-			xsub = _mm256_sub_ps(xOffseted, halfWidth);
-			xd = _mm256_div_ps(xsub, mmHeight);
-			zx_d = _mm256_mul_ps(xd, zd); // xd *= z
+			xPixelPos = _mm_set1_ps(x);
+			xOffseted = _mm_add_ps(xPixelPos, _x_offset);
+			xsub = _mm_sub_ps(xOffseted, halfWidth);
+			xd = _mm_div_ps(xsub, mmHeight);
+			zx_d = _mm_mul_ps(xd, zd);
 
-			bitColorG = _mm256_and_ps(zx_d, bitwise);
-			bitColorB = _mm256_and_ps(zd, bitwise);
+			//Color
+			bitColorG = _mm_and_si128(_mm_castps_si128(zx_d), _mm_castps_si128(bitwise));
+			bitColorB = _mm_and_si128(_mm_castps_si128(zd), _mm_castps_si128(bitwise));
 
-			colorG = _mm256_mul_ps(bitColorG, greenshift);
-			colorB = _mm256_mul_ps(bitColorB, blueShift);
+			colorG = _mm_slli_epi32(bitColorG, 8);
 
-			colors = _mm256_add_ps(colorG, colorB);
-			colorsA = _mm256_add_ps(colors, alpha);
+			//colorG = _mm_sll_epi32(bitColorG, shift);
 
-			finalColor = _mm256_castps_si256(colorsA);
-			memcpy(GetBuffer().GetPixelArray() + (x + y * m_width) * 4, (int*)&finalColor, sizeof(int) * 8);
+			colors = _mm_and_si128(colorG, bitColorB);
+			//_mm_castps_si128
+			finalColor = colors;
+			memcpy(GetBuffer().GetPixelArray() + (x + y * m_width) * 4, (int*)&finalColor, sizeof(int) * 4);
 
 			//GetBuffer().SetPixel(x, y, 0xff00ff);
 		}
@@ -193,9 +260,9 @@ void Render3D::OldRender()
 	}
 
 
-	//DrawWall(0, 2, 1, 2);
+	DrawWall(0, 2, 1, 2);
 	//DrawWall(0, 1, 0, 2);
-	DrawWall(1, 0, 0, 2.0);
+	//DrawWall(0, 0, 1, 0);
 	RenderFog();
 }
 

@@ -18,6 +18,7 @@ public:
 	void SIMDRender();
 
 	void OldRender();
+	void ShaderRender();
 
 	void RenderFog();
 
