@@ -28,26 +28,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -78,12 +78,13 @@
     <LibraryPath>E:\Projects-C++\Raycast-Engine\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>F:\C++GitProjects\Raycast-Engine\include;F:\C++GitProjects\Raycast-Engine\Raycast-Engine\IMGUI;$(IncludePath)</IncludePath>
-    <LibraryPath>F:\C++GitProjects\Raycast-Engine\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\IMGUI;$(SolutionDir)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>F:\C++GitProjects\Raycast-Engine\include;$(IncludePath);F:\C++GitProjects\Raycast-Engine\Raycast-Engine\IMGUI</IncludePath>
-    <LibraryPath>F:\C++GitProjects\Raycast-Engine\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>
+    </IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -105,6 +106,9 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;sfml-audio-d.lib;sfml-graphics-d.lib;sfml-main-d.lib;sfml-system-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>NotSet</SubSystem>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -136,39 +140,14 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-system.lib;sfml-window.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="IMGUI\imgui-SFML.cpp" />
-    <ClCompile Include="IMGUI\imgui.cpp" />
-    <ClCompile Include="IMGUI\imgui_demo.cpp" />
-    <ClCompile Include="IMGUI\imgui_draw.cpp" />
-    <ClCompile Include="IMGUI\imgui_widgets.cpp" />
-    <ClCompile Include="src\Render\Display.cpp" />
-    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\Render\Render3D.cpp" />
-    <ClCompile Include="src\Render\RenderBuffer.cpp" />
-    <ClCompile Include="src\Render\RenderLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IMGUI\imconfig-SFML.h" />
-    <ClInclude Include="IMGUI\imconfig.h" />
-    <ClInclude Include="IMGUI\imgui-SFML.h" />
-    <ClInclude Include="IMGUI\imgui-SFML_export.h" />
-    <ClInclude Include="IMGUI\imgui.h" />
-    <ClInclude Include="IMGUI\imgui_internal.h" />
-    <ClInclude Include="IMGUI\imstb_rectpack.h" />
-    <ClInclude Include="IMGUI\imstb_textedit.h" />
-    <ClInclude Include="IMGUI\imstb_truetype.h" />
-    <ClInclude Include="src\Render\Display.h" />
-    <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\math.h" />
-    <ClInclude Include="src\Render\Render2D.h" />
-    <ClInclude Include="src\Render\Render3D.h" />
-    <ClInclude Include="src\Render\RenderBuffer.h" />
-    <ClInclude Include="src\Render\RenderLayer.h" />
+    <ClInclude Include="Mathf.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
